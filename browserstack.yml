@@ -1,0 +1,22 @@
+userName: jonathanpineda_y1bRZY
+accessKey: KcfGhTHZX82NdqpcSxED
+projectName: proyectoBase
+buildName: arquetipo
+buildIdentifier: '#377'
+framework: java
+staticWebDriver: true
+parallelsPerPlatform: 1
+source: java:intellij:v1.1.4
+browserstackLocal: true
+debug: true
+networkLogs: true
+consoleLogs: errors
+platforms:
+- browserName: Chrome
+  browserVersion: latest
+  os: Windows
+  osVersion: 11
+- browserName: Safari
+  browserVersion: 15.6
+  os: OS X
+  osVersion: Monterey
