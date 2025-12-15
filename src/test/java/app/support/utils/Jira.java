@@ -2,7 +2,7 @@ package app.support.utils;
 
 import io.cucumber.java.Scenario;
 
-import java.util.Set;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
@@ -58,7 +58,7 @@ public class Jira {
         return get(PROP_PREFIX_TAG, "TEST");
     }
 
-    private String extractTestKeyFromTags(String prefix, Set<String> tags) {
+    private String extractTestKeyFromTags(String prefix, Collection<String> tags) {
         if (prefix == null || prefix.isBlank() || tags == null || tags.isEmpty()) {
             return null;
         }

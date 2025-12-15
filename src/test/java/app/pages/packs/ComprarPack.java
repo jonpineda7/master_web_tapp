@@ -1,12 +1,10 @@
-package app.pages.gascopacks;
+package app.pages.packs;
 
 import app.support.browsers.Browser;
-import app.support.loadproperties.LoadProperty;
 import app.support.utils.ApiClient;
 import app.support.utils.ScreenShot;
 import app.support.utils.Telegram;
 import app.support.utils.WaitUtils;
-import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
