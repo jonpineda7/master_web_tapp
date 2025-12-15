@@ -1,28 +1,21 @@
 package app.com.steps;
 
-import app.pages.gascopacks.ComprarPack;
+import app.pages.packs.ComprarPack;
 import app.support.utils.ApiClient;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
-import com.opencsv.exceptions.CsvValidationException;
-import io.cucumber.java.bs.A;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.sql.SQLException;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class ComprarPacks {
 
