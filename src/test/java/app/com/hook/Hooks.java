@@ -10,6 +10,7 @@ import org.openqa.selenium.WebDriver;
 import app.support.browsers.Browser;
 import app.support.loadproperties.LoadProperty;
 import java.util.HashMap;
+import app.support.utils.Jira;
 
 public class Hooks {
     WebDriver webDriver;
@@ -18,6 +19,7 @@ public class Hooks {
     private static HashMap<Integer, String> SCENARIOS;
     private static ThreadLocal<String> NAMESCENARIO = new ThreadLocal<>();
     public static ThreadLocal<String> NAMEs = new ThreadLocal<>();
+    private static final Jira JIRA = new Jira();
 
 
     public Hooks() {
@@ -101,7 +103,10 @@ public class Hooks {
     }
 
     @After
-    public void quitDriver() {
+    public void quitDriver(Scenario scenario) {
+        // Reporta resultado a Jira (si JIRA_UPDATE=SI)
+        JIRA.reportScenarioResult(scenario);
+
         if (Browser.getDriver() != null) {
             Browser.quitDriver();
         } else {
