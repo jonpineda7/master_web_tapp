@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class ApiBrowserStack {
 
-    //ejecuta la api de browserstack para cambiar el estado de la prueba
+    // ejecuta la api de browserstack para cambiar el estado de la prueba
     public static void failed(String desc) throws URISyntaxException, IOException {
         String sessionsID = ((RemoteWebDriver) Browser.getDriver()).getSessionId().toString();
 
@@ -24,7 +24,8 @@ public class ApiBrowserStack {
         final String USERNAME = yaml.getUserName();
         final String AUTOMATE_KEY = yaml.getAccessKey();
 
-        URI uri = new URI("https://"+Browser.USERNAME+":"+Browser.AUTOMATE_KEY+"@api.browserstack.com/automate/sessions/" + sessionsID + ".json");
+        URI uri = new URI("https://" + USERNAME + ":" + AUTOMATE_KEY + "@api.browserstack.com/automate/sessions/"
+                + sessionsID + ".json");
         HttpPut putRequest = new HttpPut(uri);
 
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -35,7 +36,6 @@ public class ApiBrowserStack {
         HttpClientBuilder.create().build().execute(putRequest);
     }
 
-
     public static void passed(String desc) throws URISyntaxException, IOException {
         String sessionsID = ((RemoteWebDriver) Browser.getDriver()).getSessionId().toString();
 
@@ -44,7 +44,8 @@ public class ApiBrowserStack {
         final String USERNAME = yaml.getUserName();
         final String AUTOMATE_KEY = yaml.getAccessKey();
 
-        URI uri = new URI("https://"+Browser.USERNAME+":"+Browser.AUTOMATE_KEY+"@api.browserstack.com/automate/sessions/" + sessionsID + ".json");
+        URI uri = new URI("https://" + USERNAME + ":" + AUTOMATE_KEY + "@api.browserstack.com/automate/sessions/"
+                + sessionsID + ".json");
         HttpPut putRequest = new HttpPut(uri);
 
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();

@@ -1,25 +1,25 @@
-package app.pages.packs.compraCartera;
+package app.pages.compraCartera;
 
+import app.support.utils.WaitUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
-import pages.WebBasePage;
 
-import static cl.automation.avattar.utils.CommonsHooks.getDataFromCsv;
+import static app.support.utils.CsvUtils.getDataFromCsv;
 
+public class carteraActions {
 
-public class carteraActions extends WebBasePage {
+    WaitUtils wu = new WaitUtils();
 
     public carteraActions(WebDriver driver) {
-        super(driver);
         PageFactory.initElements(driver, this);
     }
 
-    //locators
+    // locators
     By causal = By.xpath("//input[@aria-label='Causal operación']");
     By ctaSol = By.xpath("//input[@aria-label='Cuotas solicitadas']");
-    By calcMonto= By.xpath("//button[@aria-label='Datos crédito:Calcular monto']");
+    By calcMonto = By.xpath("//button[@aria-label='Datos crédito:Calcular monto']");
     By btnSimular = By.xpath("//button[@aria-label='Datos crédito:Simular']");
     By addCtaExt = By.xpath("//button[@aria-label='Cuentas externas:Nuevo']");
     By numCredExt = By.xpath("//input[@id='1_OCS_Numero_Credito']");
@@ -42,70 +42,69 @@ public class carteraActions extends WebBasePage {
     By tappItem = By.xpath("//ul/li/div[contains(text(),'Cliente no quiere tarjeta TAPP')]");
 
     public void enterNewCcartera(String sheetName, int row) throws Exception {
-        fluentWait(addCtaExt).click();
-        waitForProcessingToComplete(2);
-        typeAndEnter(getDataFromCsv(sheetName, row , 5), numCredExt);
-        waitForProcessingToComplete(2);
-        fluentWait(dt).click();
-        typeAndEnter(getDataFromCsv(sheetName, row , 6), deudaTotalExt);
-        waitForProcessingToComplete(2);
+        wu.fluentWait(addCtaExt).click();
+        wu.waitForProcessingToComplete(2);
+        wu.typeAndEnter(getDataFromCsv(sheetName, row, 5), numCredExt);
+        wu.waitForProcessingToComplete(2);
+        wu.fluentWait(dt).click();
+        wu.typeAndEnter(getDataFromCsv(sheetName, row, 6), deudaTotalExt);
+        wu.waitForProcessingToComplete(2);
 
-        fluentWait(in).click();
-        typeAndEnter(getDataFromCsv(sheetName,  row , 11), instit);
-        waitForProcessingToComplete(2);
+        wu.fluentWait(in).click();
+        wu.typeAndEnter(getDataFromCsv(sheetName, row, 11), instit);
+        wu.waitForProcessingToComplete(2);
 
-        fluentWait(monExcento).click();
-        typeAndEnter(getDataFromCsv(sheetName, row , 12), monExcento);
-        waitForProcessingToComplete(2);
+        wu.fluentWait(monExcento).click();
+        wu.typeAndEnter(getDataFromCsv(sheetName, row, 12), monExcento);
+        wu.waitForProcessingToComplete(2);
 
-        fluentWait(monAfecto).click();
-        typeAndEnter(getDataFromCsv(sheetName, row , 13), monAfecto);
-        waitForProcessingToComplete(2);
+        wu.fluentWait(monAfecto).click();
+        wu.typeAndEnter(getDataFromCsv(sheetName, row, 13), monAfecto);
+        wu.waitForProcessingToComplete(2);
 
-        fluentWait(impuesto).click();
-        typeAndEnter(getDataFromCsv(sheetName, row , 14), impuesto);
-        waitForProcessingToComplete(2);
+        wu.fluentWait(impuesto).click();
+        wu.typeAndEnter(getDataFromCsv(sheetName, row, 14), impuesto);
+        wu.waitForProcessingToComplete(2);
 
-        typeAndEnter(getDataFromCsv(sheetName, row , 15), tasaImp);
-        waitForProcessingToComplete(2);
-        typeAndEnter(getDataFromCsv(sheetName, row , 16), fechaOtor);
-        waitForProcessingToComplete(2);
-        //typeAndEnter(ReadFile.getCellValue(fileName, sheetName, row , 17), monEfectivo);
-        //Thread.sleep(2000);
+        wu.typeAndEnter(getDataFromCsv(sheetName, row, 15), tasaImp);
+        wu.waitForProcessingToComplete(2);
+        wu.typeAndEnter(getDataFromCsv(sheetName, row, 16), fechaOtor);
+        wu.waitForProcessingToComplete(2);
+        // typeAndEnter(ReadFile.getCellValue(fileName, sheetName, row , 17),
+        // monEfectivo);
+        // Thread.sleep(2000);
 
-        //fluentWait(causal).sendKeys("C");
+        // fluentWait(causal).sendKeys("C");
 
-        typeAndEnter("Otra",causal);
+        wu.typeAndEnter("Otra", causal);
 
-        waitForProcessingToComplete(2);
-        fluentWait(causal).sendKeys(Keys.ENTER);
-        waitForProcessingToComplete(2);
-        typeAndEnter(getDataFromCsv(sheetName, row , 3), ctaSol);
-        waitForProcessingToComplete(2);
-        typeAndEnter("28Motivos personales/Otros",txtObjetivo);
+        wu.waitForProcessingToComplete(2);
+        wu.fluentWait(causal).sendKeys(Keys.ENTER);
+        wu.waitForProcessingToComplete(2);
+        wu.typeAndEnter(getDataFromCsv(sheetName, row, 3), ctaSol);
+        wu.waitForProcessingToComplete(2);
+        wu.typeAndEnter("28Motivos personales/Otros", txtObjetivo);
 
-        if(!isElementPresent(tappListFalse)){
-            waitForProcessingToComplete(2);
-            click(tappList);
-            click(tappItem);
-            waitForProcessingToComplete(2);
+        if (!wu.isElementPresent(tappListFalse)) {
+            wu.waitForProcessingToComplete(2);
+            wu.click(tappList);
+            wu.click(tappItem);
+            wu.waitForProcessingToComplete(2);
         }
 
-        if (checkSeguro(segCesCheck)){
-            //fluentWait(segCesCheck).click();
-            typeAndEnter(getDataFromCsv(sheetName, row , 19), sitLab);
-            fluentWait(calcMonto).click();
-            waitForProcessingToComplete(5);
+        if (wu.checkSeguro(segCesCheck)) {
+            // fluentWait(segCesCheck).click();
+            wu.typeAndEnter(getDataFromCsv(sheetName, row, 19), sitLab);
+            wu.fluentWait(calcMonto).click();
+            wu.waitForProcessingToComplete(5);
 
+        } else {
+            wu.fluentWait(calcMonto).click();
+            wu.waitForProcessingToComplete(5);
         }
-        else{
-            fluentWait(calcMonto).click();
-            waitForProcessingToComplete(5);
-        }
 
-        fluentWait(btnSimular).click();
-        waitForProcessingToComplete(5);
-
+        wu.fluentWait(btnSimular).click();
+        wu.waitForProcessingToComplete(5);
 
     }
 }

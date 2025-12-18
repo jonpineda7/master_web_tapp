@@ -1,33 +1,35 @@
-package app.pages.packs.refinanciar;
+package app.pages.refinanciar;
 
+import app.support.browsers.Browser;
+import app.support.utils.WaitUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
-import pages.WebBasePage;
 
-import static cl.automation.avattar.utils.CommonsHooks.getDataFromCsv;
+import static app.support.utils.CsvUtils.getDataFromCsv;
 
+public class refinActions {
 
-public class refinActions extends WebBasePage {
+    WaitUtils wu = new WaitUtils();
+
     public refinActions(WebDriver driver) {
-        super(driver);
         PageFactory.initElements(driver, this);
     }
 
-    //locators
+    // locators
     By ctaFinan = By.xpath("//button[@aria-label='Cuentas financieras:Nuevo']");
 
     By numCred = By.xpath("//span[@class='siebui-icon-pick']");
     By btnCtaFinanAceptar = By.xpath("//button[@data-display='Aceptar']");
     By causalRef = By.xpath("//input[@aria-label='Causal operación']");
     By ctaRef = By.xpath("//input[@aria-label='Cuotas solicitadas']");
-    By calcMonto= By.xpath("//button[@aria-label='Datos crédito:Calcular monto']");
+    By calcMonto = By.xpath("//button[@aria-label='Datos crédito:Calcular monto']");
     By btnSimularRepa = By.xpath("//button[@aria-label='Datos crédito:Simular']");
     By segCesCheck = By.xpath("//input[@aria-label='Seguro cesantía']");
     By sitLab = By.xpath("//input[@aria-label='Situación laboral']");
     By txtObjetivo = By.xpath("//td[@valign='middle']/div/input[@aria-label='Objetivo crédito']");
     By tappList = By.xpath("//input[@aria-label='Apertura TAPP']/following-sibling::span");
-    //*[@id="s_3_1_1_0_icon"]
+    // *[@id="s_3_1_1_0_icon"]
 
     By flagCtaPlanilla = By.xpath("//tr/td/div/input[@aria-label='Cuotas Planilla']");
 
@@ -38,88 +40,84 @@ public class refinActions extends WebBasePage {
 
     public void enterDataNewRefin(String sheetName, int row) throws Exception {
 
-        explicitWaitElementToBeClickable(flagCtaPlanilla).click(); // marcar antes de agregar la cuenta financiera para creditos vigentes norm o en mora
-        explicitWaitElementToBeClickable(ctaFinan).click();
+        wu.explicitWaitElementToBeClickable(flagCtaPlanilla).click(); // marcar antes de agregar la cuenta financiera
+                                                                      // para creditos vigentes norm o en mora
+        wu.explicitWaitElementToBeClickable(ctaFinan).click();
         Thread.sleep(2000);
-        explicitWaitElementToBeClickable(numCred).click();
+        wu.explicitWaitElementToBeClickable(numCred).click();
         Thread.sleep(2000);
-        explicitWaitElementToBeClickable(btnCtaFinanAceptar).click();
-        Thread.sleep(2000);
-
-        typeAndEnter("Modificación carga con aumento",causalRef);
-
+        wu.explicitWaitElementToBeClickable(btnCtaFinanAceptar).click();
         Thread.sleep(2000);
 
-        typeAndEnter(getDataFromCsv(sheetName, row , 11), ctaRef);
+        wu.typeAndEnter("Modificación carga con aumento", causalRef);
 
-        if (checkSeguro(segCesCheck)){
-            //fluentWait(segCesCheck).click();
-            typeAndEnter(getDataFromCsv(sheetName, row , 19), sitLab);
-            fluentWait(calcMonto).click();
+        Thread.sleep(2000);
+
+        wu.typeAndEnter(getDataFromCsv(sheetName, row, 11), ctaRef);
+
+        if (wu.checkSeguro(segCesCheck)) {
+            // fluentWait(segCesCheck).click();
+            wu.typeAndEnter(getDataFromCsv(sheetName, row, 19), sitLab);
+            wu.fluentWait(calcMonto).click();
+            Thread.sleep(5000);
+        } else {
+            wu.fluentWait(calcMonto).click();
             Thread.sleep(5000);
         }
-        else{
-            fluentWait(calcMonto).click();
-            Thread.sleep(5000);
-        }
 
+        wu.typeAndEnter("28Motivos personales/Otros", txtObjetivo);
 
-        typeAndEnter("28Motivos personales/Otros",txtObjetivo);
-
-        if(!isElementPresent(tappListFalse)){
+        if (!wu.isElementPresent(tappListFalse)) {
             Thread.sleep(2000);
-            click(tappList);
-            click(tappItem);
+            wu.click(tappList);
+            wu.click(tappItem);
             Thread.sleep(2000);
         }
 
-        fluentWait(btnSimularRepa).click();
+        wu.fluentWait(btnSimularRepa).click();
         Thread.sleep(5000);
-
 
     }
 
     public void RefinEfectivo(String sheetName, int row) throws Exception {
 
-        explicitWaitElementToBeClickable(flagCtaPlanilla).click(); // marcar antes de agregar la cuenta financiera para creditos vigentes norm o en mora
-        explicitWaitElementToBeClickable(ctaFinan).click();
+        wu.explicitWaitElementToBeClickable(flagCtaPlanilla).click(); // marcar antes de agregar la cuenta financiera
+                                                                      // para creditos vigentes norm o en mora
+        wu.explicitWaitElementToBeClickable(ctaFinan).click();
         Thread.sleep(2000);
-        explicitWaitElementToBeClickable(numCred).click();
+        wu.explicitWaitElementToBeClickable(numCred).click();
         Thread.sleep(2000);
-        explicitWaitElementToBeClickable(btnCtaFinanAceptar).click();
-        Thread.sleep(2000);
-
-        typeAndEnter("Modificación carga con aumento",causalRef);
-
+        wu.explicitWaitElementToBeClickable(btnCtaFinanAceptar).click();
         Thread.sleep(2000);
 
-        typeAndEnter(getDataFromCsv(sheetName, row , 11), ctaRef);
-        typeAndEnter(getDataFromCsv(sheetName, row , 13), montoEfec);
+        wu.typeAndEnter("Modificación carga con aumento", causalRef);
 
-        if (checkSeguro(segCesCheck)){
-            //fluentWait(segCesCheck).click();
-            typeAndEnter(getDataFromCsv(sheetName, row , 19), sitLab);
-            fluentWait(calcMonto).click();
+        Thread.sleep(2000);
+
+        wu.typeAndEnter(getDataFromCsv(sheetName, row, 11), ctaRef);
+        wu.typeAndEnter(getDataFromCsv(sheetName, row, 13), montoEfec);
+
+        if (wu.checkSeguro(segCesCheck)) {
+            // fluentWait(segCesCheck).click();
+            wu.typeAndEnter(getDataFromCsv(sheetName, row, 19), sitLab);
+            wu.fluentWait(calcMonto).click();
+            Thread.sleep(5000);
+        } else {
+            wu.fluentWait(calcMonto).click();
             Thread.sleep(5000);
         }
-        else{
-            fluentWait(calcMonto).click();
-            Thread.sleep(5000);
-        }
 
+        wu.typeAndEnter("28Motivos personales/Otros", txtObjetivo);
 
-        typeAndEnter("28Motivos personales/Otros",txtObjetivo);
-
-        if(!isElementPresent(tappListFalse)){
+        if (!wu.isElementPresent(tappListFalse)) {
             Thread.sleep(2000);
-            click(tappList);
-            click(tappItem);
+            wu.click(tappList);
+            wu.click(tappItem);
             Thread.sleep(2000);
         }
 
-        fluentWait(btnSimularRepa).click();
+        wu.fluentWait(btnSimularRepa).click();
         Thread.sleep(5000);
-
 
     }
 }

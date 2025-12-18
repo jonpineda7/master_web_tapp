@@ -1,21 +1,21 @@
-package app.pages.packs.oportunidad;
+package app.pages.oportunidad;
 
+import app.support.utils.WaitUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
-import pages.WebBasePage;
 
-import static cl.automation.avattar.utils.CommonsHooks.getDataFromCsv;
+import static app.support.utils.CsvUtils.getDataFromCsv;
 
-public class oportunidadActions extends WebBasePage {
+public class oportunidadActions {
 
+    WaitUtils wu = new WaitUtils();
 
     public oportunidadActions(WebDriver driver) {
-        super(driver);
         PageFactory.initElements(driver, this);
     }
 
-    //locators
+    // locators
     By cellAffiliationType = By.id("1_s_1_l_OCS_Tipo_Afiliacion");
     By iconAffiliationType = By.id("s_1_2_52_0_icon");
     By selectDropDown = By.xpath("//td[@class='siebui-popup-filter']/span[2]/span");
@@ -35,38 +35,38 @@ public class oportunidadActions extends WebBasePage {
     By columProd = By.id("1_s_1_l_OCS_Product_Name");
 
     public void NewOportunidad(String sheetName, int row) throws Exception {
-        waitForProcessingToComplete(5);
-        clickWhenReady(linkOpportunities);
-        waitForProcessingToComplete(5);
-        clickWhenReady(buttonOpportunitiesNew);
-        waitForProcessingToComplete(2);
+        wu.waitForProcessingToComplete(5);
+        wu.clickWhenReady(linkOpportunities);
+        wu.waitForProcessingToComplete(5);
+        wu.clickWhenReady(buttonOpportunitiesNew);
+        wu.waitForProcessingToComplete(2);
 
         if (!getDataFromCsv(sheetName, row, 4).equals("normal")) {
-            doubleClick(inputTipoOper);
-            //ingresa tipo de operacion distinto a venta normal
-            typeAndEnter(getDataFromCsv(sheetName, row, 4), inputTipoOper);
+            wu.doubleClick(inputTipoOper);
+            // ingresa tipo de operacion distinto a venta normal
+            wu.typeAndEnter(getDataFromCsv(sheetName, row, 4), inputTipoOper);
         }
 
-        //ingresa rut de empresa
-        clickWhenReady(cellAffiliationType);
-        clickWhenReady(iconAffiliationType);
-        clickWhenReady(selectDropDown);
-        clickWhenReady(rutEmp);
-        waitForProcessingToComplete(2);
-        //ingreso de producto
-        typeAndEnter(getDataFromCsv(sheetName, row, 7), inputSearch);
-        waitForProcessingToComplete(5);
-        explicitWaitElementToBeClickable(columProd).click();
-        clickWhenReady(iconProduct);
-        waitForProcessingToComplete(2);
-        clickWhenReady(searchProd);
-        waitForProcessingToComplete(2);
-        typeAndEnter(getDataFromCsv(sheetName, row, 8), inputCprod);
-        System.out.println("se ingreso el producto: " +getDataFromCsv(sheetName, row, 8));
-        waitForProcessingToComplete(2);
-        clickWhenReady(buttonAccept);
-        waitForProcessingToComplete(2);
-        clickWhenReady(buttonAutomaticEconomicOffer);
+        // ingresa rut de empresa
+        wu.clickWhenReady(cellAffiliationType);
+        wu.clickWhenReady(iconAffiliationType);
+        wu.clickWhenReady(selectDropDown);
+        wu.clickWhenReady(rutEmp);
+        wu.waitForProcessingToComplete(2);
+        // ingreso de producto
+        wu.typeAndEnter(getDataFromCsv(sheetName, row, 7), inputSearch);
+        wu.waitForProcessingToComplete(5);
+        wu.explicitWaitElementToBeClickable(columProd).click();
+        wu.clickWhenReady(iconProduct);
+        wu.waitForProcessingToComplete(2);
+        wu.clickWhenReady(searchProd);
+        wu.waitForProcessingToComplete(2);
+        wu.typeAndEnter(getDataFromCsv(sheetName, row, 8), inputCprod);
+        System.out.println("se ingreso el producto: " + getDataFromCsv(sheetName, row, 8));
+        wu.waitForProcessingToComplete(2);
+        wu.clickWhenReady(buttonAccept);
+        wu.waitForProcessingToComplete(2);
+        wu.clickWhenReady(buttonAutomaticEconomicOffer);
         Thread.sleep(5000);
 
     }

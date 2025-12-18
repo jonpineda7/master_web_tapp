@@ -9,7 +9,7 @@ import java.util.Map;
 public class Jira {
 
     private static final String PROP_JIRA_UPDATE = "JIRA_UPDATE"; // SI|NO
-    private static final String PROP_PREFIX_TAG = "PREFIX_TAG";   // TEST2025
+    private static final String PROP_PREFIX_TAG = "PREFIX_TAG"; // TEST2025
 
     // Si quieres consolidar resultados y enviarlos al final, los guardas aquí
     private final Map<String, String> results = new ConcurrentHashMap<>();
@@ -26,7 +26,8 @@ public class Jira {
         String testKey = extractTestKeyFromTags(prefix, scenario.getSourceTagNames());
 
         if (testKey == null || testKey.isBlank()) {
-            System.out.println("[JIRA] (SKIP) No se encontró tag Jira con prefijo '" + prefix + "' en: " + scenario.getName());
+            System.out.println(
+                    "[JIRA] (SKIP) No se encontró tag Jira con prefijo '" + prefix + "' en: " + scenario.getName());
             return;
         }
 
@@ -35,13 +36,13 @@ public class Jira {
         // Log claro para CI
         System.out.println("[JIRA] Scenario='" + scenario.getName() + "' Key=" + testKey + " Status=" + status);
 
-        // ✅ Aquí es donde después conectas el POST real a Jira/Xray/QMetry
-        // usando ApiClient o un HttpClient.
-        // Ej: ApiClient.updateXrayTestResult(testKey, status, ...);
+        // Conexión con ApiClient
+        ApiClient.updateJiraExecution(testKey, status);
     }
 
     public void finishExecution() {
-        if (!isEnabled()) return;
+        if (!isEnabled())
+            return;
 
         // Por ahora: log de cierre
         System.out.println("[JIRA] Finalizando ejecución. Total resultados: " + results.size());
@@ -73,7 +74,8 @@ public class Jira {
 
     private String get(String key, String defaultValue) {
         String v = System.getProperty(key);
-        if (v == null || v.isBlank()) v = System.getenv(key);
+        if (v == null || v.isBlank())
+            v = System.getenv(key);
         return (v == null || v.isBlank()) ? defaultValue : v;
     }
 }

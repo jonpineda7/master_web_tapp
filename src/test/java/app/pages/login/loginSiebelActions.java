@@ -1,23 +1,22 @@
-package app.pages.packs.login;
+package app.pages.login;
 
+import app.support.utils.WaitUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import pages.WebBasePage;
 
-import static cl.automation.avattar.utils.CommonsHooks.getDataFromCsv;
+import static app.support.utils.CsvUtils.getDataFromCsv;
 
+public class loginSiebelActions {
 
-public class loginSiebelActions extends WebBasePage {
-
+    WaitUtils wu = new WaitUtils();
 
     public loginSiebelActions(WebDriver driver) {
-        super(driver);
         PageFactory.initElements(driver, this);
     }
 
-    //locators
+    // locators
 
     @FindBy(name = "SWEUserName")
     WebElement inpU;
@@ -29,16 +28,17 @@ public class loginSiebelActions extends WebBasePage {
     WebElement btnL;
 
     public void loginSiebelAplication(String sheetName) throws Exception {
-        fluentWait(inpU);
+        wu.fluentWait(inpU);
 
-        type(getDataFromCsv(sheetName, 1, 0), inpU);
-        type(getDataFromCsv(sheetName, 1, 1), btnL);
+        wu.type(getDataFromCsv(sheetName, 1, 0), inpU);
+        wu.type(getDataFromCsv(sheetName, 1, 1), btnL); // Typo in original code? Typed to btnL? Kept as is but logic
+                                                        // susp.
 
         btnL.click();
-        waitForProcessingToComplete(10);
+        wu.waitForProcessingToComplete(10);
     }
 
     public void navigateTo(String url) throws Throwable {
-        goToUrl(url);
+        wu.goToUrl(url);
     }
 }

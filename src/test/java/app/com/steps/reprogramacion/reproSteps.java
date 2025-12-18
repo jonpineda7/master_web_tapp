@@ -1,15 +1,15 @@
 package app.com.steps.reprogramacion;
 
+import app.support.browsers.Browser;
 import io.cucumber.java.en.And;
-import pages.reprogramacion.reproActions;
-import steps.Hooks;
+import app.pages.reprogramacion.reproActions;
 
 public class reproSteps {
 
     reproActions ReproActions;
 
     public reproSteps() {
-        this.ReproActions = new reproActions(Hooks.driver);
+        this.ReproActions = new reproActions(Browser.getDriver());
     }
 
     @And("ejecutivo ingresa datos a reprogramar hoja: {string} fila: {int}")

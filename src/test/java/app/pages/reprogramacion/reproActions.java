@@ -1,22 +1,22 @@
-package app.pages.packs.reprogramacion;
+package app.pages.reprogramacion;
 
+import app.support.utils.WaitUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
-import pages.WebBasePage;
 
-import static cl.automation.avattar.utils.CommonsHooks.getDataFromCsv;
+import static app.support.utils.CsvUtils.getDataFromCsv;
 
+public class reproActions {
 
-public class reproActions extends WebBasePage {
+    WaitUtils wu = new WaitUtils();
 
     public reproActions(WebDriver driver) {
-        super(driver);
         PageFactory.initElements(driver, this);
     }
 
-//Locators
-By cuentas = By.xpath("//div[@id='a_1']/div/div");
+    // Locators
+    By cuentas = By.xpath("//div[@id='a_1']/div/div");
 
     By ctaFinanciera = By.xpath("//a[contains(.,'Cuentas financieras')]");
     By btnSincronizar = By.xpath("(//span[contains(.,'Sincronizar')])[2]");
@@ -32,35 +32,34 @@ By cuentas = By.xpath("//div[@id='a_1']/div/div");
 
     public void irReprogramar(String sheetName, int row) throws Exception {
 
-        fluentWait(ctaFinanciera).click();
-        waitForProcessingToComplete(5);
+        wu.fluentWait(ctaFinanciera).click();
+        wu.waitForProcessingToComplete(5);
 
-        //fluentWait(despliegaLista).sendKeys("N");
-        typeAndEnter("Nº de cuenta",despliegaLista);
-        //fluentWait(despliegaLista).sendKeys(Keys.ENTER);
+        // fluentWait(despliegaLista).sendKeys("N");
+        wu.typeAndEnter("Nº de cuenta", despliegaLista);
+        // fluentWait(despliegaLista).sendKeys(Keys.ENTER);
 
-        type(getDataFromCsv(sheetName, row, 1), valorFiltro);
+        wu.type(getDataFromCsv(sheetName, row, 1), valorFiltro);
 
-        waitForProcessingToComplete(2);
-        fluentWait(cuentas);
+        wu.waitForProcessingToComplete(2);
+        wu.fluentWait(cuentas);
 
-        fluentWait(filtrar).click();
-        waitForProcessingToComplete(2);
-        fluentWait(btnSincronizar).click();
+        wu.fluentWait(filtrar).click();
+        wu.waitForProcessingToComplete(2);
+        wu.fluentWait(btnSincronizar).click();
 
-        waitForProcessingToComplete(15);
-        fluentWait(btnReprogramar).click();
-        waitForProcessingToComplete(20);
+        wu.waitForProcessingToComplete(15);
+        wu.fluentWait(btnReprogramar).click();
+        wu.waitForProcessingToComplete(20);
 
-        typeAndEnter("Modificación carga sin aumento",causalOp);
-        //fluentWait(causalOp).sendKeys(Keys.ENTER);
+        wu.typeAndEnter("Modificación carga sin aumento", causalOp);
+        // fluentWait(causalOp).sendKeys(Keys.ENTER);
         Thread.sleep(2000);
-        typeAndEnter("28Motivos personales/Otros",txtObjetivo);
-        fluentWait(btnCalcMont).click();
+        wu.typeAndEnter("28Motivos personales/Otros", txtObjetivo);
+        wu.fluentWait(btnCalcMont).click();
         Thread.sleep(2000);
-        fluentWait(btnSimular).click();
+        wu.fluentWait(btnSimular).click();
         Thread.sleep(2000);
-
 
     }
 }

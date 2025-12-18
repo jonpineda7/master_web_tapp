@@ -28,7 +28,6 @@ public class ApiClient {
     public static String existingProjectName;
     public static String existingBuildName;
 
-
     public static String getCode() {
         HttpClient httpClient = HttpClients.createDefault();
         HttpGet request = new HttpGet("https://coruscant.gascosistemas.com/apihelper/get_code_sms");
@@ -81,7 +80,6 @@ public class ApiClient {
         }
     }
 
-
     public static void unlockPhoneSerie(String phone) {
 
         HttpClient httpClient = HttpClients.createDefault();
@@ -129,7 +127,7 @@ public class ApiClient {
 
         // Configura el cuerpo de la solicitud con los datos JSON
         StringEntity entity = new StringEntity(jsonBody, "UTF-8");
-        //request.setEntity(entity);
+        // request.setEntity(entity);
 
         try {
             HttpResponse response = httpClient.execute(request);
@@ -168,14 +166,15 @@ public class ApiClient {
         HttpClient httpClient = HttpClients.createDefault();
 
         // URL del servicio POST
-        String url = "https://coruscant.gascosistemas.com/apihelper/insert_data_gp/" + phone + "/"+ rut + "/" + controlDate;
+        String url = "https://coruscant.gascosistemas.com/apihelper/insert_data_gp/" + phone + "/" + rut + "/"
+                + controlDate;
 
         // Crear la solicitud HTTP POST
         HttpPost request = new HttpPost(url);
 
-        // Configura el encabezado para indicar que estas enviando datos en formato de formulario
+        // Configura el encabezado para indicar que estas enviando datos en formato de
+        // formulario
         request.setHeader("Content-Type", "application/x-www-form-urlencoded");
-
 
         try {
             // Ejecuta la solicitud HTTP POST
@@ -216,7 +215,8 @@ public class ApiClient {
 
         // Obtiene el directorio de trabajo actual y construye la ruta al archivo YAML
         File yamlFile = new File(System.getProperty("user.dir"), yamlFileName);
-        //variable que hay que modificar según proyecto a ejecutar ARQUETIPO/GASCOPACKS/etc
+        // variable que hay que modificar según proyecto a ejecutar
+        // ARQUETIPO/GASCOPACKS/etc
         String project = "ARQUETIPO";
 
         if (!yamlFile.exists()) {
@@ -248,7 +248,8 @@ public class ApiClient {
 
             // Parsear el JSON
             ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, Object> configData = objectMapper.readValue(result, new TypeReference<>() {});
+            Map<String, Object> configData = objectMapper.readValue(result, new TypeReference<>() {
+            });
 
             // Verificar que configData no sea nulo
             if (configData == null) {
@@ -269,10 +270,10 @@ public class ApiClient {
             }
 
             // Mantener los valores existentes de los campos clave
-             existingUserName = (String) yamlData.get("userName");
-             existingAccessKey = (String) yamlData.get("accessKey");
-             existingProjectName = (String) yamlData.get("projectName");
-             existingBuildName = (String) yamlData.get("buildName");
+            existingUserName = (String) yamlData.get("userName");
+            existingAccessKey = (String) yamlData.get("accessKey");
+            existingProjectName = (String) yamlData.get("projectName");
+            existingBuildName = (String) yamlData.get("buildName");
 
             // Actualizar otros campos, pero NO sobrescribir los campos clave
             yamlData.put("userName", existingUserName);
@@ -340,6 +341,64 @@ public class ApiClient {
 
         } catch (IOException e) {
             System.out.println("Error al actualizar el archivo YAML: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // --------------------------------------------------------------------------------
+    // JIRA INTEGRATION
+    // --------------------------------------------------------------------------------
+
+    // Nota: Reemplazar con la URL real de la API de Jira o Xray
+    private static final String JIRA_API_URL = "https://jira.yourcompany.com/rest/raven/1.0/import/execution";
+    private static final String JIRA_AUTH_TOKEN = System.getenv("JIRA_AUTH_TOKEN"); // Token Base64 o Bearer
+
+    public static void updateJiraExecution(String testKey, String status) {
+        if (JIRA_AUTH_TOKEN == null || JIRA_AUTH_TOKEN.isBlank()) {
+            System.out.println("[ApiClient] JIRA_AUTH_TOKEN no configurado. Saltando actualización Jira.");
+            return;
+        }
+
+        System.out.println("[ApiClient] Actualizando Jira: " + testKey + " -> " + status);
+        HttpClient httpClient = HttpClients.createDefault();
+        HttpPost request = new HttpPost(JIRA_API_URL);
+
+        try {
+            // Configurar Headers
+            request.setHeader("Content-Type", "application/json");
+            request.setHeader("Authorization", "Basic " + JIRA_AUTH_TOKEN);
+
+            // Mapeo básico de status Cucumber a Jira/Xray
+            String xrayStatus = status.equalsIgnoreCase("PASSED") ? "PASS" : "FAIL";
+
+            // Payload Ejemplo (Ajustar según la documentación de la API específica de
+            // Jira/Xray/Zephyr)
+            String jsonBody = String.format("{" +
+                    "\"testExecutionKey\": \"%s\"," +
+                    "\"info\": { \"summary\": \"Execution by Automation\" }," +
+                    "\"tests\": [ { \"testKey\": \"%s\", \"status\": \"%s\" } ]" +
+                    "}", "EXEC-123", testKey, xrayStatus); // 'EXEC-123' debería ser dinámico si se crea una ejecución
+                                                           // nueva
+
+            // Nota: Para implementación real, se recomienda crear primero la ejecución y
+            // luego actualizar los tests,
+            // o crear una ejecución que contenga todos los resultados al final.
+            // Esta implementación es un ejemplo de actualización individual.
+
+            StringEntity entity = new StringEntity(jsonBody);
+            request.setEntity(entity);
+
+            HttpResponse response = httpClient.execute(request);
+            int statusCode = response.getStatusLine().getStatusCode();
+
+            if (statusCode >= 200 && statusCode < 300) {
+                System.out.println("[ApiClient] Jira actualizado correctamente para " + testKey);
+            } else {
+                System.out.println("[ApiClient] Error actualizando Jira. Status: " + statusCode);
+            }
+
+        } catch (Exception e) {
+            System.out.println("[ApiClient] Excepción al conectar con Jira: " + e.getMessage());
             e.printStackTrace();
         }
     }

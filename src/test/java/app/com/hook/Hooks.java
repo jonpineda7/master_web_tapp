@@ -14,24 +14,17 @@ import app.support.utils.Jira;
 
 public class Hooks {
     WebDriver webDriver;
-    //ApiClient ac;
+    // ApiClient ac;
 
     private static HashMap<Integer, String> SCENARIOS;
     private static ThreadLocal<String> NAMESCENARIO = new ThreadLocal<>();
     public static ThreadLocal<String> NAMEs = new ThreadLocal<>();
     private static final Jira JIRA = new Jira();
 
-
     public Hooks() {
         if (SCENARIOS == null)
             SCENARIOS = new HashMap<Integer, String>();
     }
-
-  /*  @Before
-    public void beforeTest() {
-        // Llama al método que actualiza el YAML
-        //new UpdateYamlConfigRunner().main(null);
-    }*/
 
     @Before
     public void beforeHook(Scenario scenario) {
@@ -39,11 +32,6 @@ public class Hooks {
         addScenario(scenario.getName());
         NAMESCENARIO.set(scenario.getName());
         NAMEs.set(NAMESCENARIO.get());
-        /**
-         * Actualizar build_version
-         */
-        //ActualizarBuildVersion actualizador = new ActualizarBuildVersion();
-        //actualizador.actualizarBuild();
     }
 
     private void addScenario(String scenario) {

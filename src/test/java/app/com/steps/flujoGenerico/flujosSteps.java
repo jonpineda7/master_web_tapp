@@ -1,12 +1,12 @@
 package app.com.steps.flujoGenerico;
 
+import app.support.browsers.Browser;
 import io.cucumber.java.en.And;
-import pages.compraCartera.carteraActions;
-import pages.refinanciar.refinActions;
-import pages.repactacion.RepactacionActions;
-import pages.reprogramacion.reproActions;
-import pages.ventaNormalPage.ventaNormalActions;
-import steps.Hooks;
+import app.pages.compraCartera.carteraActions;
+import app.pages.refinanciar.refinActions;
+import app.pages.repactacion.RepactacionActions;
+import app.pages.reprogramacion.reproActions;
+import app.pages.ventaNormalPage.ventaNormalActions;
 
 public class flujosSteps {
 
@@ -17,11 +17,11 @@ public class flujosSteps {
     private refinActions RefinActions;
 
     public flujosSteps() {
-        this.ReproActions = new reproActions(Hooks.driver);
-        this.CarteraActions = new carteraActions(Hooks.driver);
-        this.RefinActions = new refinActions(Hooks.driver);
-        this.repactacionActions = new RepactacionActions(Hooks.driver);
-        this.VentaNormalActions = new ventaNormalActions(Hooks.driver);
+        this.ReproActions = new reproActions(Browser.getDriver());
+        this.CarteraActions = new carteraActions(Browser.getDriver());
+        this.RefinActions = new refinActions(Browser.getDriver());
+        this.repactacionActions = new RepactacionActions(Browser.getDriver());
+        this.VentaNormalActions = new ventaNormalActions(Browser.getDriver());
     }
 
     @And("^se gestiona (.+) \"([^\"]+)\" hoja: \"([^\"]+)\" fila: (\\d+)$")
@@ -32,7 +32,6 @@ public class flujosSteps {
                 VentaNormalActions.enterCreditData(sheetName, row);
                 break;
             case "repactacion":
-                //iniciarRepactacion(archivo, hoja, fila);
                 repactacionActions.enterDataNewRepactacion(sheetName, row);
                 break;
             case "compra de cartera":
@@ -48,6 +47,4 @@ public class flujosSteps {
                 throw new IllegalArgumentException("Paso no reconocido: " + paso);
         }
     }
-
-
 }

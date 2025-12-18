@@ -16,14 +16,14 @@ import java.net.URL;
 
 public class Browser {
 
-    //public static final String USERNAME = LoadProperty.BROWSERSTACK.getProperty("browserstack_name");
-    //public static final String AUTOMATE_KEY = LoadProperty.BROWSERSTACK.getProperty("browserstack_pass");
+    // El Java SDK de BrowserStack injecta automáticamente las credenciales y
+    // capabilities
+    // si el driver es RemoteWebDriver y la URL apunta al hub de BrowserStack.
+    // También soporta el uso de variables de entorno BROWSERSTACK_USERNAME y
+    // BROWSERSTACK_ACCESS_KEY
 
-    static Yaml yaml = new Yaml("browserstack.yml");
-
-    public static final String USERNAME = yaml.getUserName();
-    public static final String AUTOMATE_KEY = yaml.getAccessKey();
-    public static final String URL = "https://" + USERNAME + ":" + AUTOMATE_KEY + "@hub-cloud.browserstack.com/wd/hub";
+    // URL estándar para BrowserStack Automate
+    public static final String HUB_URL = "https://hub-cloud.browserstack.com/wd/hub";
 
     private static String url;
 
@@ -34,11 +34,9 @@ public class Browser {
             System.setProperty("webdriver.chrome.driver",
                     LoadProperty.BROWSER.getProperty("path_chrome"));
             System.setProperty("webdriver.chrome.silentOutput", "true");
-            /**
-             * Lineas 36 y 37 fix error chromedriver por actualización de chrome >=11
-             */
+
             ChromeOptions chromeOptions = new ChromeOptions();
-            chromeOptions.addArguments("--remote-allow-origins=*","ignore-certificate-errors");
+            chromeOptions.addArguments("--remote-allow-origins=*", "ignore-certificate-errors");
 
             driver.set(new ChromeDriver(chromeOptions));
             driver.get().manage().window().setSize(new Dimension(1920, 1080));
@@ -80,99 +78,87 @@ public class Browser {
     }
 
     public static RemoteWebDriver latestChrome() throws Exception {
-
         DesiredCapabilities caps = new DesiredCapabilities();
 
-        //Sistema operativo y su version
-        caps.setCapability("os", LoadProperty.OS.getProperty("os"));
-        caps.setCapability("os_version", LoadProperty.OS.getProperty("os_version_10"));
-        caps.setCapability("browserstack.idleTimeout", "300");
-        //Navegador y su version
-        caps.setCapability("browser", LoadProperty.BROWSER.getProperty("browser_chrome"));
-        caps.setCapability("browser_version", LoadProperty.BROWSER.getProperty("browser_version_latest"));
+        // Configuración básica que el SDK complementará
+        // Nota: Al usar el SDK, 'os', 'os_version', 'browser', 'browser_version'
+        // deberían venir preferentemente del browserstack.yml, aunque se pueden forzar
+        // aquí.
 
-        caps.setCapability("resolution", LoadProperty.BROWSER.getProperty("resolution"));
-
-        //Nombre de ejecucion en dashboard de browserstack
-        caps.setCapability("project", LoadProperty.BUILD.getProperty("project"));
+        // Mantenemos solo capabilities custom que definen metadatos de la prueba
         caps.setCapability("name", Hooks.NAMEs.get());
 
-
-        if (LoadProperty.BUILD.getProperty("name_task").equals("regressionLowTag")) {
-            caps.setCapability("build", LoadProperty.BUILD.getProperty("build")
-                    + " " + LoadProperty.BUILD.getProperty("build_version")
-                    + " " + LoadProperty.BUILD.getProperty("type_build_low")
-                    + " " + LoadProperty.BROWSER.getProperty("browser_chrome")
-                    + " " + LoadProperty.BROWSER.getProperty("browser_version_latest"));
-        } else if (LoadProperty.BUILD.getProperty("name_task").equals("regressionMiddleTag")) {
-            caps.setCapability("build", LoadProperty.BUILD.getProperty("build")
-                    + " " + LoadProperty.BUILD.getProperty("build_version")
-                    + " " + LoadProperty.BUILD.getProperty("type_build_middle")
-                    + " " + LoadProperty.BROWSER.getProperty("browser_chrome")
-                    + " " + LoadProperty.BROWSER.getProperty("browser_version_latest"));
-        } else if (LoadProperty.BUILD.getProperty("name_task").equals("regressionHighTag")) {
-            caps.setCapability("build", LoadProperty.BUILD.getProperty("build")
-                    + " " + LoadProperty.BUILD.getProperty("build_version")
-                    + " " + LoadProperty.BUILD.getProperty("type_build_high")
-                    + " " + LoadProperty.BROWSER.getProperty("browser_chrome")
-                    + " " + LoadProperty.BROWSER.getProperty("browser_version_latest"));
-        } else if (LoadProperty.BUILD.getProperty("name_task").equals("regressionVeryHighTag")) {
-            caps.setCapability("build", LoadProperty.BUILD.getProperty("build")
-                    + " " + LoadProperty.BUILD.getProperty("build_version")
-                    + " " + LoadProperty.BUILD.getProperty("type_build_very_high")
-                    + " " + LoadProperty.BROWSER.getProperty("browser_chrome")
-                    + " " + LoadProperty.BROWSER.getProperty("browser_version_latest"));
-        } else {
-            caps.setCapability("build", LoadProperty.BUILD.getProperty("build")
-                    + " " + LoadProperty.BUILD.getProperty("build_version")
-                    + " " + LoadProperty.BROWSER.getProperty("browser_chrome")
-                    + " " + LoadProperty.BROWSER.getProperty("browser_version_latest"));
+        // Construcción del nombre del build basado en la tarea (logica original
+        // preservada)
+        String buildName = generateBuildName();
+        if (buildName != null) {
+            caps.setCapability("build", buildName);
         }
 
-        //Configuracion para visualizacion de los logs.
-        //caps.setCapability("browserstack.debug", LoadProperty.BROWSERSTACK.getProperty("browserstack_debug"));
-        //caps.setCapability("browserstack.console", LoadProperty.BROWSERSTACK.getProperty("browserstack_console"));
-        //caps.setCapability("browserstack.networkLogs", LoadProperty.BROWSERSTACK.getProperty("browserstack_networkLogs"));
+        // Ya no hardcodeamos usuario/key en la URL
+        // El Authentication se maneja via SDK o variables de entorno estándar si se
+        // configura
+        // Sin embargo, para RemoteWebDriver puro a veces se requiere pasar user/key en
+        // URL o caps.
+        // Pero el SDK agent intercepta la creación del driver.
 
-        //Configuracion para visualizacion de los logs.
+        // Asumiendo que el SDK agent está activo (ver build.gradle), usamos
+        // capabilities mínimas.
 
         waitThread();
-        driver.set(new RemoteWebDriver(new URL(URL), caps));
+        driver.set(new RemoteWebDriver(new URL(HUB_URL), caps));
+        driver.get().manage().window().maximize();
+        driver.get().get(url);
+        return driver.get();
+    }
+
+    public static RemoteWebDriver latestMultipleChrome() throws Exception {
+        DesiredCapabilities caps = new DesiredCapabilities();
+        caps.setCapability("name", Hooks.NAMEs.get());
+
+        waitThread();
+        driver.set(new RemoteWebDriver(new URL(HUB_URL), caps));
         driver.get().manage().window().maximize();
         driver.get().get(url);
         return driver.get();
 
     }
 
-    public static RemoteWebDriver latestMultipleChrome() throws Exception {
+    private static String generateBuildName() {
+        String taskName = LoadProperty.BUILD.getProperty("name_task");
+        String baseBuild = LoadProperty.BUILD.getProperty("build") + " "
+                + LoadProperty.BUILD.getProperty("build_version");
 
-        DesiredCapabilities caps = new DesiredCapabilities();
+        // Logica simplificada
+        if (taskName == null)
+            return baseBuild;
 
-        caps.setCapability("resolution", LoadProperty.BROWSER.getProperty("resolution"));
+        String typeBuild = "";
+        switch (taskName) {
+            case "regressionLowTag":
+                typeBuild = LoadProperty.BUILD.getProperty("type_build_low");
+                break;
+            case "regressionMiddleTag":
+                typeBuild = LoadProperty.BUILD.getProperty("type_build_middle");
+                break;
+            case "regressionHighTag":
+                typeBuild = LoadProperty.BUILD.getProperty("type_build_high");
+                break;
+            case "regressionVeryHighTag":
+                typeBuild = LoadProperty.BUILD.getProperty("type_build_very_high");
+                break;
+            default:
+                return baseBuild + " " + LoadProperty.BROWSER.getProperty("browser_chrome");
+        }
 
-        //Nombre de ejecucion en dashboard de browserstack
-//        caps.setCapability("project", LoadProperty.BUILD.getProperty("project"));
-        caps.setCapability("name", Hooks.NAMEs.get());
-
-  /*      caps.setCapability("build", LoadProperty.BUILD.getProperty("build")
-                + " " + LoadProperty.BUILD.getProperty("build_version")
-                + " " + LoadProperty.BROWSER.getProperty("browser_chrome")
-                + " " + LoadProperty.BROWSER.getProperty("browser_version_latest"));
-
-*/
-        waitThread();
-        driver.set(new RemoteWebDriver(new URL(URL), caps));
-        driver.get().manage().window().maximize();
-        driver.get().get(url);
-        return driver.get();
-
+        return baseBuild + " " + typeBuild + " " + LoadProperty.BROWSER.getProperty("browser_chrome");
     }
 
     public static void quitDriver() {
         try {
-            /**Agregar logica para actualizar el estado de la prueba que acaba de finalizar**/
-            driver.get().quit();
-            /**Agregar logica para actualizar el estado de la prueba que acaba de finalizar**/
+            if (driver.get() != null) {
+                driver.get().quit();
+            }
         } catch (Exception e) {
             System.out.println("Fallo el driver al momento de cerrarse. Causa: " + e.getCause());
         }
@@ -199,6 +185,7 @@ public class Browser {
 
     /**
      * Setear variable url
+     * 
      * @param flag
      */
     public static void setUrl(String flag) {
